@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+axum = "0.7.5"
+diesel = { version = "2.2.3", features = ["sqlite"] }
+dotenvy = "0.15.7"
+rusqlite = { version = "0.32.1", features = ["bundled"] }
