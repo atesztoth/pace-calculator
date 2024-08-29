@@ -2,9 +2,19 @@
 name = "pace-calculator"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.80.0"
 
 [dependencies]
 axum = "0.7.5"
-diesel = { version = "2.2.3", features = ["sqlite"] }
+diesel = { version = "2.2.3", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15.7"
 rusqlite = { version = "0.32.1", features = ["bundled"] }
+
+
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4", # Lets you generate random UUIDs
+    "fast-rng", # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]

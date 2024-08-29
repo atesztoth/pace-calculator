@@ -1,9 +1,9 @@
-use diesel::QueryDsl;
-use pace_calculator::establish_connection;
-use pace_calculator::models::Calculation;
+use self::models::*;
+use diesel::prelude::*;
+use pace_calculator::*;
 
 pub fn main() {
-    use pace_calculator::schema::calculations::dsl::calculations;
+    use self::schema::calculations::dsl::*;
 
     let connection = &mut establish_connection();
 
@@ -12,7 +12,7 @@ pub fn main() {
         .load(connection)
         .expect("Error loading posts");
 
-    println!("Displaying {} posts", results.len());
+    println!("Displaying {} calculations", results.len());
     for calculation in results {
         println!("{:?}", calculation);
     }

@@ -1,9 +1,11 @@
 pub mod models;
 pub mod schema;
 
+use crate::models::Calculation;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
+use uuid::Uuid;
 
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
@@ -12,4 +14,28 @@ pub fn establish_connection() -> SqliteConnection {
 
     SqliteConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
+pub fn create_calculation(
+    conn: &mut SqliteConnection,
+    time: i32,
+    distance: i32,
+    pace: i32,
+) -> Calculation {
+    use self::models::NewCalculation;
+    use crate::schema::calculations;
+
+    let id = Uuid::new_v4();
+    let new_calculation = NewCalculation {
+        id: &id.to_string(),
+        pace,
+        distance,
+        time,
+    };
+
+    diesel::insert_into(calculations::table)
+        .values(&new_calculation)
+        .returning(Calculation::as_returning())
+        .get_result(conn)
+        .expect("Error saving calculation")
 }

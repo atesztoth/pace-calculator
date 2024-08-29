@@ -2,9 +2,11 @@
 
 diesel::table! {
     calculations (id) {
-        id -> Integer,
+        id -> Text,
         time -> Integer,
         distance -> Integer,
         pace -> Integer,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
