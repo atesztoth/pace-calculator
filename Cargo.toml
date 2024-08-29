@@ -3,12 +3,16 @@ name = "pace-calculator"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.80.0"
+default-run = "pace-calculator"
 
 [dependencies]
 axum = "0.7.5"
 diesel = { version = "2.2.3", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15.7"
 rusqlite = { version = "0.32.1", features = ["bundled"] }
+serde = { version = "1.0.209", features = ["derive"] }
+tokio = { version = "1.39.3", features = ["rt-multi-thread", "macros"] }
+tracing-subscriber = "0.3.18"
 
 
 [dependencies.uuid]
