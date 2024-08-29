@@ -1,5 +1,3 @@
-use self::models::*;
-use diesel::prelude::*;
 use pace_calculator::*;
 use std::fmt::Debug;
 use std::io::stdin;
@@ -9,13 +7,13 @@ pub fn main() {
     let connection = &mut establish_connection();
 
     println!("Write your time in seconds!");
-    let time: i32 = parse_number("Failed to parse input_time as i32");
+    let time: f32 = parse_number("Failed to parse input_time as i32");
 
     println!("Write your distance in meters!");
-    let distance: i32 = parse_number("Failed to parse distance as i32");
+    let distance: f32 = parse_number("Failed to parse distance as i32");
 
-    println!("Write your pace in seconds!");
-    let pace: i32 = parse_number("Failed to parse pace as i32");
+    let pace = distance / time;
+    println!("pace in m/s: {:?}", pace);
 
     let calculation = create_calculation(connection, time, distance, pace);
 

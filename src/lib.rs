@@ -18,9 +18,9 @@ pub fn establish_connection() -> SqliteConnection {
 
 pub fn create_calculation(
     conn: &mut SqliteConnection,
-    time: i32,
-    distance: i32,
-    pace: i32,
+    time: f32,
+    distance: f32,
+    pace: f32,
 ) -> Calculation {
     use self::models::NewCalculation;
     use crate::schema::calculations;
