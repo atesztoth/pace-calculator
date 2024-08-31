@@ -1,5 +1,7 @@
+mod calculation;
 mod calculation_handlers;
 
+use crate::calculation::route_handlers::calculate_pace;
 use crate::calculation_handlers::calculation_api_handlers::store_calculation;
 use axum::{
     http::StatusCode,
@@ -9,6 +11,8 @@ use axum::{
 use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
 use std::env;
+
+// TODO: Add validation, add a middleware to look for api key...
 
 #[tokio::main]
 async fn main() {
@@ -23,7 +27,8 @@ async fn main() {
         .route("/", get(root))
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user))
-        .route("/calculate", post(store_calculation));
+        .route("/calculate", post(store_calculation))
+        .route("/calculate-test", post(calculate_pace));
 
     // Retrieve the port number from the environment, defaulting to 3000 if not set
     let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
@@ -39,7 +44,7 @@ async fn main() {
 
 // basic handler that responds with a static string
 async fn root() -> &'static str {
-    "Hello, World!"
+    "Alive & Well"
 }
 
 async fn create_user(
