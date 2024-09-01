@@ -1,18 +1,23 @@
 mod calculation;
 mod calculation_handlers;
+mod middleware;
 
 use crate::calculation::route_handlers::calculate_pace;
 use crate::calculation_handlers::calculation_api_handlers::store_calculation;
+use crate::middleware::api_key_middleware::api_key_middleware;
 use axum::{
     http::StatusCode,
+    middleware::{self as axum_middleware},
     routing::{get, post},
     Json, Router,
 };
 use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
 use std::env;
-
-// TODO: Add validation, add a middleware to look for api key...
+use tower::ServiceBuilder;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
+use tower_http::LatencyUnit;
+use tracing::Level;
 
 #[tokio::main]
 async fn main() {
@@ -28,7 +33,20 @@ async fn main() {
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user))
         .route("/calculate", post(store_calculation))
-        .route("/calculate-test", post(calculate_pace));
+        .route("/calculate-test", post(calculate_pace))
+        .layer(axum_middleware::from_fn(api_key_middleware))
+        .layer(
+            ServiceBuilder::new().layer(
+                TraceLayer::new_for_http()
+                    .make_span_with(DefaultMakeSpan::new().include_headers(true))
+                    .on_request(DefaultOnRequest::new().level(Level::DEBUG))
+                    .on_response(
+                        DefaultOnResponse::new()
+                            .level(Level::DEBUG)
+                            .latency_unit(LatencyUnit::Micros),
+                    ), // on so on for `on_eos`, `on_body_chunk`, and `on_failure`
+            ),
+        );
 
     // Retrieve the port number from the environment, defaulting to 3000 if not set
     let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());

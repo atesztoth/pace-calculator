@@ -1,6 +1,6 @@
+use crate::calculation::dto::{CalculationResult, IncomingCalculationDetails};
 use axum::http::StatusCode;
 use axum::Json;
-use crate::calculation::dto::{CalculationResult, IncomingCalculationDetails};
 
 pub async fn calculate_pace(
     Json(payload): Json<IncomingCalculationDetails>,
