@@ -8,6 +8,9 @@ use crate::config::env_config::EnvConfig;
 use axum::extract::State;
 use axum::routing::get;
 use axum::Router;
+use std::sync::{Arc, RwLock};
+
+pub type SharedState = Arc<RwLock<AppState>>;
 
 #[derive(Clone)]
 struct AppState {
@@ -18,16 +21,17 @@ struct AppState {
 async fn main() {
     let env_config = config::env_config::load();
 
-    let port = &env_config.port.clone();
+    let port = env_config.port.clone();
     let state = AppState { env_config };
+    let shared_state: SharedState = Arc::new(RwLock::new(state));
 
     // initialize tracing
     tracing_subscriber::fmt::init();
 
     let app = Router::new()
         .route("/health", get(health))
-        .merge(routes::root::create())
-        .with_state(state.clone());
+        .merge(routes::root::create(Arc::clone(&shared_state)))
+        .with_state(Arc::clone(&shared_state));
 
     let address = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&address).await.unwrap();
@@ -37,6 +41,6 @@ async fn main() {
 }
 
 // basic handler that responds with a static string
-async fn health(_: State<AppState>) -> &'static str {
+async fn health(_: State<SharedState>) -> &'static str {
     "OK"
 }
