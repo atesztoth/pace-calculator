@@ -1,9 +1,9 @@
 mod calculation;
-mod calculation_handlers;
 mod config;
 mod middleware;
 mod routes;
 
+use crate::calculation::service::CalculatorService;
 use crate::config::env_config::EnvConfig;
 use axum::extract::State;
 use axum::routing::get;
@@ -15,6 +15,7 @@ pub type SharedState = Arc<RwLock<AppState>>;
 #[derive(Clone)]
 struct AppState {
     pub env_config: EnvConfig,
+    pub calculator: CalculatorService,
 }
 
 #[tokio::main]
@@ -22,7 +23,10 @@ async fn main() {
     let env_config = config::env_config::load();
 
     let port = env_config.port.clone();
-    let state = AppState { env_config };
+    let state = AppState {
+        env_config,
+        calculator: CalculatorService::new(),
+    };
     let shared_state: SharedState = Arc::new(RwLock::new(state));
 
     // initialize tracing
