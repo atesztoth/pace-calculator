@@ -1,10 +1,13 @@
 mod calculation;
 mod config;
 mod db;
+mod error;
 mod middleware;
+mod models;
 mod response;
 mod routes;
-mod validation;
+pub mod schema;
+pub mod validation;
 
 use crate::calculation::service::CalculatorService;
 use crate::config::env_config::EnvConfig;

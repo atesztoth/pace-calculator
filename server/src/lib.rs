@@ -1,11 +1,11 @@
-pub mod models;
-pub mod schema;
-
-use crate::models::Calculation;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 use uuid::Uuid;
+mod models;
+mod schema;
+
+use crate::models::*;
 
 // TODO: pass in state!
 pub fn establish_connection() -> SqliteConnection {

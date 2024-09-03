@@ -7,10 +7,12 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::Response;
 use axum::Json;
+use tracing::{debug, error};
 
 pub async fn run_calculation(
     State(state): State<SharedState>,
     ValidJsonRequest(payload): ValidJsonRequest<IncomingCalculationDetails>,
+    // TODO: just pass back an ApiError, not a response from here!
 ) -> Result<(StatusCode, Json<CalculationResult>), Response> {
     let calculator = &state.read().unwrap().calculator;
 
@@ -28,7 +30,19 @@ pub async fn run_calculation(
         ));
     }
 
-    Ok((StatusCode::OK, Json(response.unwrap())))
+    let result = response.unwrap();
+
+    // TODO:
+    match calculator.store_calculation(&result) {
+        Ok(_) => {
+            debug!("Calculation saved successfully!");
+        }
+        Err(e) => {
+            error!("Could not save calculation! {:?}", e);
+        }
+    }
+
+    Ok((StatusCode::OK, Json(result)))
 }
 
 fn calculate_pace(time: Seconds, dist: Meter, calculator: &CalculatorService) -> CalculationResult {

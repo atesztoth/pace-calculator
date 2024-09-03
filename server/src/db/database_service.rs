@@ -1,10 +1,17 @@
-use diesel::r2d2::{ConnectionManager, Pool};
+use crate::db::errors::DbError;
+use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::SqliteConnection;
 
 pub trait DatabaseService: Send + Sync {
     fn new(db_url: &str) -> impl DatabaseService
     where
         Self: Sized;
+
+    #[allow(dead_code)]
+    fn get_pool(&self) -> Pool<ConnectionManager<SqliteConnection>>;
+    fn get_connection(
+        &self,
+    ) -> Result<PooledConnection<ConnectionManager<SqliteConnection>>, DbError>;
 }
 
 #[derive(Clone)]
@@ -13,6 +20,8 @@ pub(crate) struct DatabaseServiceImpl {
 }
 
 impl DatabaseService for DatabaseServiceImpl {
+    // TODO: Fix this madness
+    // fn new(db_url: &str) -> impl DatabaseService {
     fn new(db_url: &str) -> Self {
         let manager = ConnectionManager::<SqliteConnection>::new(db_url);
 
@@ -21,5 +30,18 @@ impl DatabaseService for DatabaseServiceImpl {
             .expect("Failed to create DB pool!");
 
         DatabaseServiceImpl { connection_pool }
+    }
+
+    fn get_pool(&self) -> Pool<ConnectionManager<SqliteConnection>> {
+        self.connection_pool.clone()
+    }
+
+    fn get_connection(
+        &self,
+    ) -> Result<PooledConnection<ConnectionManager<SqliteConnection>>, DbError> {
+        match self.connection_pool.clone().get() {
+            Ok(c) => Ok(c),
+            Err(e) => Err(DbError::CannotGetPooledConnection(e.to_string())),
+        }
     }
 }
