@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use validator::{Validate, ValidationError};
+use validator::Validate;
 
 /// How many seconds needed to travel a km
 pub(crate) type Pace = f32;

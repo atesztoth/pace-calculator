@@ -1,6 +1,4 @@
-use crate::{
-    middleware::api_key_middleware::api_key_middleware, routes::calculate, AppState, SharedState,
-};
+use crate::{middleware::api_key_middleware::api_key_middleware, routes::calculate, SharedState};
 use axum::{middleware as axum_middleware, Router};
 use tower::ServiceBuilder;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};

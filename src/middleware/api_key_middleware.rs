@@ -1,8 +1,6 @@
 use crate::SharedState;
 use axum::extract::State;
 use axum::{extract::Request, http::StatusCode, middleware::Next, response::IntoResponse};
-use dotenvy::dotenv;
-use std::env;
 use tracing::warn;
 
 const HEADER_API_KEY_PROPERTY: &str = "x-api-key";

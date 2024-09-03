@@ -12,7 +12,7 @@ use axum::routing::get;
 use axum::Router;
 use std::sync::{Arc, RwLock};
 
-pub type SharedState = Arc<RwLock<AppState>>;
+pub(crate) type SharedState = Arc<RwLock<AppState>>;
 
 #[derive(Clone)]
 struct AppState {
