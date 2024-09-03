@@ -1,5 +1,6 @@
 mod calculation;
 mod config;
+mod db;
 mod middleware;
 mod response;
 mod routes;
@@ -7,6 +8,7 @@ mod validation;
 
 use crate::calculation::service::CalculatorService;
 use crate::config::env_config::EnvConfig;
+use crate::db::database_service::{DatabaseService, DatabaseServiceImpl};
 use axum::extract::State;
 use axum::routing::get;
 use axum::Router;
@@ -17,7 +19,9 @@ pub(crate) type SharedState = Arc<RwLock<AppState>>;
 #[derive(Clone)]
 struct AppState {
     pub env_config: EnvConfig,
+    // Not using dynamic dispatch.
     pub calculator: CalculatorService,
+    pub db: Arc<DatabaseServiceImpl>,
 }
 
 #[tokio::main]
@@ -25,10 +29,10 @@ async fn main() {
     let env_config = config::env_config::load();
 
     let port = env_config.port.clone();
-    let state = AppState {
-        env_config,
-        calculator: CalculatorService::new(),
-    };
+    let state = create_app_state(&env_config);
+
+    // TODO: it would be enough to protect the services,
+    // not the whole state.
     let shared_state: SharedState = Arc::new(RwLock::new(state));
 
     // initialize tracing
@@ -49,4 +53,15 @@ async fn main() {
 // basic handler that responds with a static string
 async fn health(_: State<SharedState>) -> &'static str {
     "OK"
+}
+
+fn create_app_state(env_config: &EnvConfig) -> AppState {
+    let db = Arc::new(DatabaseServiceImpl::new(&env_config.database_url));
+    let calculator = CalculatorService::new(Arc::clone(&db));
+
+    AppState {
+        db,
+        calculator,
+        env_config: env_config.clone(),
+    }
 }
