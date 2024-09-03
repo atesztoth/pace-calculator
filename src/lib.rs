@@ -7,6 +7,7 @@ use dotenvy::dotenv;
 use std::env;
 use uuid::Uuid;
 
+// TODO: pass in state!
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
 

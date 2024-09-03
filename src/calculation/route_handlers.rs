@@ -1,16 +1,17 @@
 use crate::calculation::dto::{CalculationResult, IncomingCalculationDetails, Meter, Seconds};
 use crate::calculation::service::CalculatorService;
+use crate::response::api_response::ApiErrorResponse;
+use crate::validation::valid_json_request::ValidJsonRequest;
 use crate::SharedState;
 use axum::extract::State;
 use axum::http::StatusCode;
+use axum::response::Response;
 use axum::Json;
 
-// TODO: Add error handling and validation!
 pub async fn run_calculation(
     State(state): State<SharedState>,
-    Json(payload): Json<IncomingCalculationDetails>,
-) -> Result<(StatusCode, Json<CalculationResult>), StatusCode> {
-    println!("Incoming: {:?}", payload);
+    ValidJsonRequest(payload): ValidJsonRequest<IncomingCalculationDetails>,
+) -> Result<(StatusCode, Json<CalculationResult>), Response> {
     let calculator = &state.read().unwrap().calculator;
 
     let response = match (payload.pace, payload.distance, payload.time) {
@@ -21,7 +22,10 @@ pub async fn run_calculation(
     };
 
     if response.is_none() {
-        return Err(StatusCode::BAD_REQUEST);
+        return Err(ApiErrorResponse::new(
+            StatusCode::BAD_REQUEST,
+            Some("Invalid input! Provide two parameters!".to_string()),
+        ));
     }
 
     Ok((StatusCode::OK, Json(response.unwrap())))

@@ -1,7 +1,9 @@
 mod calculation;
 mod config;
 mod middleware;
+mod response;
 mod routes;
+mod validation;
 
 use crate::calculation::service::CalculatorService;
 use crate::config::env_config::EnvConfig;
