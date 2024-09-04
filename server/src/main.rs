@@ -6,10 +6,10 @@ mod middleware;
 mod models;
 mod response;
 mod routes;
-pub mod schema;
-pub mod validation;
+mod schema;
+mod validation;
 
-use crate::calculation::service::CalculatorService;
+use crate::calculation::calculation_service::CalculatorService;
 use crate::config::env_config::EnvConfig;
 use crate::db::database_service::{DatabaseService, DatabaseServiceImpl};
 use axum::extract::State;
