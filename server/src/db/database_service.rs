@@ -3,12 +3,13 @@ use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::SqliteConnection;
 
 pub trait DatabaseService: Send + Sync {
-    fn new(db_url: &str) -> impl DatabaseService
+    fn new(db_url: &str) -> Self
     where
         Self: Sized;
 
     #[allow(dead_code)]
     fn get_pool(&self) -> Pool<ConnectionManager<SqliteConnection>>;
+
     fn get_connection(
         &self,
     ) -> Result<PooledConnection<ConnectionManager<SqliteConnection>>, DbError>;
@@ -20,8 +21,6 @@ pub(crate) struct DatabaseServiceImpl {
 }
 
 impl DatabaseService for DatabaseServiceImpl {
-    // TODO: Fix this madness
-    // fn new(db_url: &str) -> impl DatabaseService {
     fn new(db_url: &str) -> Self {
         let manager = ConnectionManager::<SqliteConnection>::new(db_url);
 

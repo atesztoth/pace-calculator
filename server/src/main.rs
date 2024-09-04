@@ -22,9 +22,7 @@ pub(crate) type SharedState = Arc<RwLock<AppState>>;
 #[derive(Clone)]
 struct AppState {
     pub env_config: EnvConfig,
-    // Not using dynamic dispatch.
     pub calculator: CalculatorService,
-    pub db: Arc<DatabaseServiceImpl>,
 }
 
 #[tokio::main]
@@ -63,7 +61,6 @@ fn create_app_state(env_config: &EnvConfig) -> AppState {
     let calculator = CalculatorService::new(Arc::clone(&db));
 
     AppState {
-        db,
         calculator,
         env_config: env_config.clone(),
     }
