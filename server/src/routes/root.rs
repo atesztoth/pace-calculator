@@ -21,7 +21,7 @@ pub fn create(s: SharedState) -> Router<SharedState> {
             api_key_middleware,
         ));
 
-    let main_router = Router::<SharedState>::new().nest("/", app_router).layer(
+    Router::<SharedState>::new().nest("/", app_router).layer(
         ServiceBuilder::new().layer(
             TraceLayer::new_for_http()
                 .make_span_with(DefaultMakeSpan::new().include_headers(true))
@@ -32,7 +32,5 @@ pub fn create(s: SharedState) -> Router<SharedState> {
                         .latency_unit(LatencyUnit::Micros),
                 ),
         ),
-    );
-
-    main_router
+    )
 }
