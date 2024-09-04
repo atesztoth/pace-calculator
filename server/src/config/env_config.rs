@@ -9,7 +9,7 @@ pub struct EnvConfig {
 }
 
 pub fn load() -> EnvConfig {
-    if let Some(path) = dotenv().ok() {
+    if let Ok(path) = dotenv() {
         println!(
             "Env loaded from .env file {}",
             path.to_str().unwrap_or("Unable to convert path")

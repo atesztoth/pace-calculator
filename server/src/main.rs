@@ -9,7 +9,7 @@ mod routes;
 mod schema;
 mod validation;
 
-use crate::calculation::calculation_service::CalculatorService;
+use crate::calculation::calculator_service::CalculatorService;
 use crate::config::env_config::EnvConfig;
 use crate::db::database_service::{DatabaseService, DatabaseServiceImpl};
 use axum::extract::State;

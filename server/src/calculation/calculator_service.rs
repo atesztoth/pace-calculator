@@ -66,7 +66,7 @@ impl CalculatorService {
 
 #[cfg(test)]
 mod test {
-    use crate::calculation::calculation_service::CalculatorService;
+    use crate::calculation::calculator_service::CalculatorService;
     use crate::db::database_service::DatabaseService;
     use crate::db::errors::DbError;
     use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
