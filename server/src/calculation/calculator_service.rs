@@ -56,10 +56,7 @@ impl CalculatorService {
 
         match save_result {
             Ok(r) => Ok(r),
-            // TODO: Fix this madness!
-            Err(e) => Err(ApiError::CalculationError(CalculationError::SaveFailed(
-                e.to_string(),
-            ))),
+            Err(e) => Err(CalculationError::SaveFailed(e.to_string()).into()),
         }
     }
 }
