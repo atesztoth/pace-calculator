@@ -1,5 +1,5 @@
+use crate::calculation::calculation_service::CalculatorService;
 use crate::calculation::dto::{CalculationResult, IncomingCalculationDetails, Meter, Seconds};
-use crate::calculation::service::CalculatorService;
 use crate::response::api_response::ApiErrorResponse;
 use crate::validation::valid_json_request::ValidJsonRequest;
 use crate::SharedState;

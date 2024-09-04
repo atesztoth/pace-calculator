@@ -1,9 +1,10 @@
-use crate::error::api_error::ApiError;
 use crate::{
     calculation::dto::{CalculationResult, Meter, Pace, Seconds},
     calculation::errors::CalculationError,
     db::database_service::DatabaseService,
+    error::api_error::ApiError,
     models::{Calculation, NewCalculation},
+    schema::calculations,
 };
 use diesel::{RunQueryDsl, SelectableHelper};
 use std::sync::Arc;
@@ -48,7 +49,7 @@ impl CalculatorService {
             time: calc.distance,
         };
 
-        let save_result = diesel::insert_into(crate::schema::calculations::table)
+        let save_result = diesel::insert_into(calculations::table)
             .values(&new_calculation)
             .returning(Calculation::as_returning())
             .get_result(conn);
@@ -65,7 +66,7 @@ impl CalculatorService {
 
 #[cfg(test)]
 mod test {
-    use crate::calculation::service::CalculatorService;
+    use crate::calculation::calculation_service::CalculatorService;
     use crate::db::database_service::DatabaseService;
     use crate::db::errors::DbError;
     use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
