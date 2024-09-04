@@ -1,0 +1,44 @@
+.formRoot {
+    input {
+        color: white;
+    }
+
+    ::placeholder {
+        color: #CCCCCC;
+        opacity: 1; /* Firefox */
+    }
+
+    ::-ms-input-placeholder { /* Edge 12 -18 */
+        color: #CCCCCC;
+    }
+}
+
+.dataRoot {
+    display: flex;
+    gap: .5rem;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dataBox {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    align-items: center;
+}
+
+.calculatorInfo {
+    font-size: 1rem;
+}
+
+.paceInfo {
+    font-size: 1rem;
+}
+
+.calculatorSubmit {
+    transition: background-color .3s ease-in;
+}
+
+.calculatorSubmit:hover {
+    background-color: #51aaab;
+}

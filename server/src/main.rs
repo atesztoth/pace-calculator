@@ -13,9 +13,11 @@ use crate::calculation::calculator_service::CalculatorService;
 use crate::config::env_config::EnvConfig;
 use crate::db::database_service::{DatabaseService, DatabaseServiceImpl};
 use axum::extract::State;
+use axum::http::{HeaderValue, Method};
 use axum::routing::get;
 use axum::Router;
 use std::sync::{Arc, RwLock};
+use tower_http::cors::{Any, CorsLayer};
 
 pub(crate) type SharedState = Arc<RwLock<AppState>>;
 
@@ -39,9 +41,21 @@ async fn main() {
     // initialize tracing
     tracing_subscriber::fmt::init();
 
+    let origins: Vec<HeaderValue> = env_config
+        .cors_whitelist
+        .iter()
+        .map(|s| s.as_str().parse::<HeaderValue>().unwrap())
+        .collect();
+
     let app = Router::new()
         .route("/health", get(health))
         .merge(routes::root::create(Arc::clone(&shared_state)))
+        .layer(
+            CorsLayer::new()
+                .allow_methods([Method::OPTIONS, Method::GET, Method::POST])
+                .allow_headers(Any)
+                .allow_origin(origins), // .allow_credentials(true),
+        )
         .with_state(Arc::clone(&shared_state));
 
     let address = format!("0.0.0.0:{}", port);

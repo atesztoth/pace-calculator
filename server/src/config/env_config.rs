@@ -6,6 +6,7 @@ pub struct EnvConfig {
     pub port: String,
     pub api_key: String,
     pub database_url: String,
+    pub cors_whitelist: Vec<String>,
 }
 
 pub fn load() -> EnvConfig {
@@ -18,10 +19,17 @@ pub fn load() -> EnvConfig {
         println!("Did not load env from .env file!");
     }
 
+    let cors_whitelist_str =
+        env::var("CORS_WHITELIST").expect("CORS whitelist has not been provided!");
+
     EnvConfig {
         port: env::var("PORT").unwrap_or_else(|_| "3000".to_string()),
         api_key: env::var("API_KEY").expect("Environment variable 'API_KEY' was not provided!"),
         database_url: env::var("DATABASE_URL")
             .expect("Environment variable 'API_KEY' was not provided!"),
+        cors_whitelist: cors_whitelist_str
+            .split(',')
+            .map(|s| s.to_string())
+            .collect(),
     }
 }
