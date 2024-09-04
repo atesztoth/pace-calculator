@@ -11,7 +11,7 @@ pub struct ApiErrorResponse {
 }
 
 impl ApiErrorResponse {
-    pub(crate) fn new(status: StatusCode, message: Option<String>) -> Response {
+    pub fn create_response(status: StatusCode, message: Option<String>) -> Response {
         ApiErrorResponse { message, status }.into_response()
     }
 }

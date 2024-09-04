@@ -21,15 +21,15 @@ impl IntoResponse for ServerError {
         match self {
             ServerError::ValidationError(_) => {
                 let message = format!("Input validation error: [{self}]").replace('\n', ", ");
-                ApiErrorResponse::new(StatusCode::BAD_REQUEST, Some(message))
+                ApiErrorResponse::create_response(StatusCode::BAD_REQUEST, Some(message))
             }
 
             ServerError::JsonRejection(_) => {
-                ApiErrorResponse::new(StatusCode::BAD_REQUEST, Some(self.to_string()))
+                ApiErrorResponse::create_response(StatusCode::BAD_REQUEST, Some(self.to_string()))
             }
 
             ServerError::AxumFormRejection(_) => {
-                ApiErrorResponse::new(StatusCode::BAD_REQUEST, Some(self.to_string()))
+                ApiErrorResponse::create_response(StatusCode::BAD_REQUEST, Some(self.to_string()))
             }
         }
         .into_response()

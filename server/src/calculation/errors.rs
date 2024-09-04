@@ -17,6 +17,6 @@ impl IntoResponse for CalculationError {
             CalculationError::SaveFailed(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
-        ApiErrorResponse::new(status_code, Some(self.to_string()))
+        ApiErrorResponse::create_response(status_code, Some(self.to_string()))
     }
 }

@@ -21,6 +21,6 @@ impl IntoResponse for DbError {
             DbError::CannotGetPooledConnection(_) => StatusCode::CONFLICT,
         };
 
-        ApiErrorResponse::new(status_code, Some(self.to_string()))
+        ApiErrorResponse::create_response(status_code, Some(self.to_string()))
     }
 }

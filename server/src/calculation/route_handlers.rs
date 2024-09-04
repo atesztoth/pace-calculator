@@ -24,7 +24,7 @@ pub async fn run_calculation(
     };
 
     if response.is_none() {
-        return Err(ApiErrorResponse::new(
+        return Err(ApiErrorResponse::create_response(
             StatusCode::BAD_REQUEST,
             Some("Invalid input! Provide two parameters!".to_string()),
         ));
