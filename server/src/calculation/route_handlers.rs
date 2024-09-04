@@ -32,7 +32,6 @@ pub async fn run_calculation(
 
     let result = response.unwrap();
 
-    // TODO:
     match calculator.store_calculation(&result) {
         Ok(_) => {
             debug!("Calculation saved successfully!");
