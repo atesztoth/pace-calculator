@@ -23,7 +23,7 @@ export const validateCalculatorInputs = (
   // Now we can handle further validation
   const validatableObject: ValidatableObject<keyof RawCalculatorInput> = {
     pace: { value: input.pace || void 0, excludeIfUndefined: true, constraints: ['stringPace'] },
-    time: { value: input.time || void 0, excludeIfUndefined: true, constraints: ['stringNumberGtZero'] },
+    time: { value: input.time || void 0, excludeIfUndefined: true, constraints: ['stringPace'] },
     distance: { value: input.distance || void 0, excludeIfUndefined: true, constraints: ['stringNumberGtZero'] },
   }
 

@@ -77,7 +77,15 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, presentingResults
               minHeight: '100px',
             }}
           >
-            <span style={{ display: 'block', fontSize: '1.5rem', marginBottom: '1rem' }}>Results:</span>
+            <span
+              style={{
+                display: 'block',
+                fontSize: '1.5rem',
+                marginBottom: '1rem',
+              }}
+            >
+              Results:
+            </span>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <p className={styles.noMarginPadding}>Distance: {presentingResults.distance} km</p>
               <p className={styles.noMarginPadding}>Time to run: {presentingResults.time}</p>
@@ -105,18 +113,26 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, presentingResults
           <div className={styles.dataRoot}>
             <div className={styles.dataBox}>
               <span>I ran</span>
-              <input disabled={parentLoading} ref={distanceRef} type="number" placeholder="Example: 10" />
+              <input
+                disabled={parentLoading}
+                ref={distanceRef}
+                type="number"
+                placeholder="Example: 10"
+                className={styles.distanceBox}
+              />
             </div>
             <div className={styles.dataBox}>
               <span>kilometers in</span>
               <input disabled={parentLoading} ref={timeRef} type="string" placeholder="Exapmle: 44:00" />
+              <span>minutes,</span>
             </div>
-            <div className={styles.dataBox}>
-              <span>minutes, which is a pace of: </span>
-              <input disabled={parentLoading} ref={paceRef} type="string" placeholder="Exapmle: 4:24" />
+            <div className={styles.dataBox} style={{ marginTop: '1rem' }}>
+              <span> which is a pace of:</span>
+              <input disabled={parentLoading} ref={paceRef} type="string" placeholder="Example: 4:24" />
               <span>(hour:min:sec) / km</span>
             </div>
           </div>
+
           <p className={styles.paceInfo}>In the pace column, hour and min are optional.</p>
         </div>
         <input disabled={parentLoading} type="submit" className={styles.calculatorBtn} value="Calculate!" />

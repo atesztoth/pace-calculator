@@ -17,11 +17,16 @@
     justify-content: center;
     font-size: calc(10px + 1vmin);
     color: white;
-    padding: 2rem;
+    padding: 1rem;
     overflow: hidden;
+
+    @media (min-width: 500px) {
+        padding: 2rem;
+    }
 }
 
 .App-content {
+    width: 100%;
     max-width: 1000px;
 }
 
