@@ -12,7 +12,6 @@ use tracing::{debug, error};
 pub async fn run_calculation(
     State(state): State<SharedState>,
     ValidJsonRequest(payload): ValidJsonRequest<IncomingCalculationDetails>,
-    // TODO: just pass back an ApiError, not a response from here!
 ) -> Result<(StatusCode, Json<CalculationResult>), Response> {
     let calculator = &state.read().unwrap().calculator;
 

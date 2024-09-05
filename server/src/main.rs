@@ -9,13 +9,13 @@ mod routes;
 mod schema;
 mod validation;
 
-use crate::calculation::calculator_service::CalculatorService;
-use crate::config::env_config::EnvConfig;
-use crate::db::database_service::{DatabaseService, DatabaseServiceImpl};
 use axum::extract::State;
 use axum::http::{HeaderValue, Method};
 use axum::routing::get;
 use axum::Router;
+use calculation::calculator_service::CalculatorService;
+use config::env_config::EnvConfig;
+use db::database_service::{DatabaseService, DatabaseServiceImpl};
 use std::sync::{Arc, RwLock};
 use tower_http::cors::{Any, CorsLayer};
 

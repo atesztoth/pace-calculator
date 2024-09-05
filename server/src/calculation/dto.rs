@@ -12,11 +12,11 @@ pub(crate) type Seconds = f32;
 // #[validate(schema(function = "validate_calc_details", skip_on_field_errors = false))]
 pub struct IncomingCalculationDetails {
     #[validate(range(exclusive_min = 0.0))]
-    pub time: Option<f32>,
+    pub time: Option<Seconds>,
     #[validate(range(exclusive_min = 0.0))]
-    pub distance: Option<f32>,
+    pub distance: Option<Meter>,
     #[validate(range(exclusive_min = 0.0))]
-    pub pace: Option<f32>,
+    pub pace: Option<Pace>,
 }
 
 // Not doing this, because the resulting error msg is just too ugly for me. :')
@@ -39,7 +39,7 @@ pub struct IncomingCalculationDetails {
 // the output to our `create_user` handler
 #[derive(Serialize)]
 pub struct CalculationResult {
-    pub time: f32,
-    pub distance: f32,
-    pub pace: f32,
+    pub time: Seconds,
+    pub distance: Meter,
+    pub pace: Pace,
 }
