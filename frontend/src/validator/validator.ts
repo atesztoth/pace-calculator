@@ -1,9 +1,10 @@
 import type { Validator, ValidatableObject, ValidatedResult } from './types'
 import { ValidatorKey } from './validatable-types.enum'
-import { validateStringNumber, validateStringNumberGtZero, validateTimeString } from './validators'
+import { validateStringPace, validateTimeString, validateStringNumber, validateStringNumberGtZero } from './validators'
 
 const defaultValidators = Object.freeze({
   stringTime: validateTimeString,
+  stringPace: validateStringPace,
   stringNumber: validateStringNumber,
   stringNumberGtZero: validateStringNumberGtZero,
 } satisfies Record<keyof typeof ValidatorKey, Validator<any>>)
@@ -19,6 +20,8 @@ export const runValidate = <
   // Sometimes tests do nothing just holds you back.
 ): ValidatedResult<K> => {
   return (Object.keys(object) as K[]).reduce((a, c) => {
+    if ((object[c].excludeIfUndefined ?? false) && object[c].value === void 0) return a
+
     // No constraints? Ok, valid.
     if (object[c].constraints.length < 1) {
       return { ...a, [c]: { isValid: true, validatorResults: [] } as ValidatedResult<string>[string] }
@@ -32,4 +35,5 @@ export const runValidate = <
   }, {} as ValidatedResult<K>)
 }
 
-export const validate = <T extends ValidatableObject>(object: T) => runValidate(object, defaultValidators)
+export const validate = <K extends string = string>(object: ValidatableObject<K>) =>
+  runValidate(object, defaultValidators)

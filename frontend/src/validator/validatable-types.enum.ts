@@ -5,6 +5,11 @@ export enum ValidatorKey {
   stringTime,
 
   /**
+   * @description stringTime that has a value gt 0
+   */
+  stringPace,
+
+  /**
    * @description Input is a stringified number.
    */
   stringNumber,
