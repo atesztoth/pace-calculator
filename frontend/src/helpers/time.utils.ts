@@ -29,3 +29,19 @@ export const convertTimeStrToSeconds = (str: string): Seconds | null => {
     .reverse()
     .reduce((a, c, i) => a! + c! * Math.pow(60, i), 0)
 }
+
+export const secondsToTimeString = (input: number): string => {
+  const { hours, minutes, seconds } = secondsToHMS(input)
+  return [hours, minutes, seconds]
+    .filter((v, i, a) => v !== 0 || i === a.length - 1)
+    .map((v) => String(v).padStart(2, '0'))
+    .join(':')
+}
+
+export const secondsToHMS = (input: number): { hours: number; minutes: number; seconds: number } => {
+  const hours = Math.floor(input / 3600)
+  const minutes = Math.floor((input % 3600) / 60)
+  const seconds = input % 60
+
+  return { hours, minutes, seconds }
+}

@@ -35,10 +35,22 @@
     font-size: 1rem;
 }
 
-.calculatorSubmit {
-    transition: background-color .3s ease-in;
+.calculatorBtn {
+    font-size: 1.2rem;
+    border: .2rem;
+    border-radius: .5rem;
+    transition: all .3s ease-in;
+    padding: .2rem .5rem;
 }
 
-.calculatorSubmit:hover {
+.calculatorBtn:hover {
+    border: 0;
+    border-radius: .5rem;
+    padding: .2rem .5rem;
     background-color: #51aaab;
+}
+
+.noMarginPadding {
+    padding: 0;
+    margin: 0;
 }

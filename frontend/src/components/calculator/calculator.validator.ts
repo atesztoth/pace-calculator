@@ -50,7 +50,7 @@ export const validateCalculatorInputs = (
       const firstValidatorResult = validatorResult.validatorResults[0]?.validatorValue
       if (!firstValidatorResult) throw new Error('Unexpected error!')
 
-      return { ...a, [key]: firstValidatorResult }
+      return { ...a, [key]: key === 'distance' ? +firstValidatorResult * 1000 : firstValidatorResult }
     }, {} as CalculatorInput),
   }
 }

@@ -1,12 +1,19 @@
-import type { CalculatorInput } from './types'
+import { CalculatorInput, DisplayableCalculatorResult } from './types'
 import { CalculationValidationError, validateCalculatorInputs } from './calculator.validator'
 
 import toast from 'react-hot-toast'
 import React, { useRef } from 'react'
 import styles from './calculator.module.css'
+import SimpleModalComponent from '../simple-modal.component'
 
-type Props = { parentLoading: boolean; onCalculate: (_: CalculatorInput) => void }
-const CalculatorComponent: React.FC<Props> = ({ parentLoading, onCalculate }) => {
+type Props = {
+  parentLoading: boolean
+  presentingResults?: DisplayableCalculatorResult
+
+  onCalculate: (_: CalculatorInput) => void
+  onClearResults: () => void
+}
+const CalculatorComponent: React.FC<Props> = ({ parentLoading, presentingResults, onCalculate, onClearResults }) => {
   const distanceRef = useRef<HTMLInputElement>(null)
   const timeRef = useRef<HTMLInputElement>(null)
   const paceRef = useRef<HTMLInputElement>(null)
@@ -51,17 +58,44 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, onCalculate }) =>
       }
     }
 
-    if (!!validValues!.pace) {
-      // need to do a conversion too
-      // const paceInSeconds
-    }
-
     onCalculate(validValues!)
   }
 
   return (
     <div>
       <h2 className={styles.calculatorInfo}>Leave one of the fields empty to do the calculation!</h2>
+      {presentingResults && (
+        <SimpleModalComponent onBackdropClick={onClearResults}>
+          <div
+            style={{
+              display: 'block',
+              background: 'white',
+              color: 'black',
+              padding: '.5rem',
+              borderRadius: '1rem',
+              minWidth: '300px',
+              minHeight: '100px',
+            }}
+          >
+            <span style={{ display: 'block', fontSize: '1.5rem', marginBottom: '1rem' }}>Results:</span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <p className={styles.noMarginPadding}>Distance: {presentingResults.distance} km</p>
+              <p className={styles.noMarginPadding}>Time to run: {presentingResults.time}</p>
+              <p className={styles.noMarginPadding}>Pace: {presentingResults.pace}</p>
+            </div>
+            <button
+              onClick={onClearResults}
+              className={styles.calculatorBtn}
+              style={{
+                marginTop: '1rem',
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </SimpleModalComponent>
+      )}
+
       <form
         className={styles.formRoot}
         onSubmit={onSubmit}
@@ -71,21 +105,21 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, onCalculate }) =>
           <div className={styles.dataRoot}>
             <div className={styles.dataBox}>
               <span>I ran</span>
-              <input disabled={parentLoading} ref={distanceRef} type="number" placeholder="10" />
+              <input disabled={parentLoading} ref={distanceRef} type="number" placeholder="Example: 10" />
             </div>
             <div className={styles.dataBox}>
               <span>kilometers in</span>
-              <input disabled={parentLoading} ref={timeRef} type="number" placeholder="44" />
+              <input disabled={parentLoading} ref={timeRef} type="string" placeholder="Exapmle: 44:00" />
             </div>
             <div className={styles.dataBox}>
               <span>minutes, which is a pace of: </span>
-              <input disabled={parentLoading} ref={paceRef} type="string" placeholder="1:04:24" />
+              <input disabled={parentLoading} ref={paceRef} type="string" placeholder="Exapmle: 4:24" />
               <span>(hour:min:sec) / km</span>
             </div>
           </div>
           <p className={styles.paceInfo}>In the pace column, hour and min are optional.</p>
         </div>
-        <input disabled={parentLoading} type="submit" className={styles.calculatorSubmit} value="Calculate!" />
+        <input disabled={parentLoading} type="submit" className={styles.calculatorBtn} value="Calculate!" />
       </form>
     </div>
   )
