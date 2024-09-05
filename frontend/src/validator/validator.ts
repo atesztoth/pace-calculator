@@ -27,8 +27,11 @@ export const runValidate = <
       return { ...a, [c]: { isValid: true, validatorResults: [] } as ValidatedResult<string>[string] }
     }
 
-    const validatorResults: { isValid: boolean; constraint: keyof typeof ValidatorKey }[] = object[c].constraints.map(
-      (constraint) => ({ constraint, isValid: validators[constraint](object[c].value as any) }),
+    const validatorResults: ValidatedResult<string>[string]['validatorResults'][0][] = object[c].constraints.map(
+      (constraint) => {
+        const validationResult = validators[constraint](object[c].value as any)
+        return { constraint, isValid: validationResult.isValid, validatorValue: validationResult.value }
+      },
     )
 
     return { ...a, [c]: { isValid: validatorResults.reduce((a, c) => a && c.isValid, true), validatorResults } }

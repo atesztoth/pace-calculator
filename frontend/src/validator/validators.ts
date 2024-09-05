@@ -1,3 +1,4 @@
+import type { ValidationResult } from './types'
 import { parseNumberStr } from '../helpers/number.utils'
 import { convertTimeStrToSeconds, timeRegex } from '../helpers/time.utils'
 
@@ -10,19 +11,30 @@ import { convertTimeStrToSeconds, timeRegex } from '../helpers/time.utils'
 // But... I just accidentally developed this validator, so ... these features may not be implemented
 // at all. But ... hmm maybe it wouldn't be that bad of an idea to create a simple lib from it :thinking:
 
-export const validateStringNumber = (v: string): boolean => {
-  return parseNumberStr(v) !== null
-}
+// Update: added the feature of exposing transformed values from validators so users
+// potentially can skip converting the values themselves at the space of usage
 
-export const validateStringNumberGtZero = (v: string): boolean => {
+export const validateStringNumber = (v: string): ValidationResult<number> => {
   const parsedNumber = parseNumberStr(v)
-  return parsedNumber !== null && parsedNumber > 0
+  const isValid = parsedNumber !== null
+
+  return { isValid, value: isValid ? parsedNumber : null }
 }
 
-export const validateTimeString = (str: string): boolean => {
-  return !!str && (timeRegex.exec(str)?.length ?? 0) > 0
+export const validateStringNumberGtZero = (v: string): ValidationResult<number> => {
+  const parsedNumber = parseNumberStr(v)
+  const isValid = parsedNumber !== null && parsedNumber > 0
+
+  return { isValid, value: isValid ? parsedNumber : null }
 }
 
-export const validateStringPace = (str: string): boolean => {
-  return !!str && (convertTimeStrToSeconds(str) ?? 0) > 0
+export const validateTimeString = (str: string): ValidationResult<null> => {
+  return { isValid: !!str && (timeRegex.exec(str)?.length ?? 0) > 0, value: null }
+}
+
+export const validateStringPace = (str: string): ValidationResult<number> => {
+  const convertedValue = !!str ? (convertTimeStrToSeconds(str) ?? 0) : 0
+  const isValid = convertedValue > 0
+
+  return { isValid, value: convertedValue }
 }

@@ -1,4 +1,4 @@
-import type { ValidatableObject } from './types'
+import { ValidatableObject, ValidationResult } from './types'
 import { runValidate } from './validator'
 
 describe('Validator', () => {
@@ -24,10 +24,10 @@ describe('Validator', () => {
     } satisfies ValidatableObject
 
     const result = runValidate(obj, {
-      stringPace: jest.fn().mockReturnValue(true),
-      stringTime: jest.fn().mockReturnValue(false),
-      stringNumberGtZero: jest.fn().mockReturnValue(true),
-      stringNumber: jest.fn().mockReturnValue(true),
+      stringPace: jest.fn((x) => ({ isValid: true, value: x }) satisfies ValidationResult<any>),
+      stringTime: jest.fn((x) => ({ isValid: false, value: null }) satisfies ValidationResult<any>),
+      stringNumberGtZero: jest.fn((x) => ({ isValid: true, value: x }) satisfies ValidationResult<any>),
+      stringNumber: jest.fn((x) => ({ isValid: true, value: x }) satisfies ValidationResult<any>),
     })
 
     expect(result).toEqual({
@@ -37,10 +37,12 @@ describe('Validator', () => {
           {
             constraint: 'stringNumber',
             isValid: true,
+            validatorValue: '1',
           },
           {
             constraint: 'stringNumberGtZero',
             isValid: true,
+            validatorValue: '1',
           },
         ],
       },
@@ -50,6 +52,7 @@ describe('Validator', () => {
           {
             constraint: 'stringNumberGtZero',
             isValid: true,
+            validatorValue: '3',
           },
         ],
       },
@@ -59,10 +62,12 @@ describe('Validator', () => {
           {
             constraint: 'stringNumberGtZero',
             isValid: true,
+            validatorValue: '123:3',
           },
           {
             constraint: 'stringTime',
             isValid: false,
+            validatorValue: null,
           },
         ],
       },
