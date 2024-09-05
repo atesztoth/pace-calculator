@@ -37,10 +37,20 @@ export const validateCalculatorInputs = (
     return { error: CalculationValidationError.invalidInput }
   }
 
+  // Create the response by collecting the first (and now only lol) validators results
+  // under the appropriate key:
   return {
-    success: providedValueNames.reduce(
-      (a, key) => ({ ...a, [key]: input[key as keyof typeof input] }),
-      {} as CalculatorInput,
-    ),
+    success: providedValueNames.reduce((a, key) => {
+      const validatorResult = validationResult[key as keyof typeof validationResult]
+
+      // Any error I throw here should never happen.
+      // (Heuristics. If happens, well that's not good for many reasons.)
+      if (!validatorResult || !validatorResult.isValid) throw new Error('Unexpected error!')
+
+      const firstValidatorResult = validatorResult.validatorResults[0]?.validatorValue
+      if (!firstValidatorResult) throw new Error('Unexpected error!')
+
+      return { ...a, [key]: firstValidatorResult }
+    }, {} as CalculatorInput),
   }
 }
