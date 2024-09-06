@@ -1,0 +1,14 @@
+services:
+  app:
+    # Either use this, or (build-be.sh and):
+    # image: pacebe:test
+    build:
+      context: server
+      dockerfile: ../docker/server.Dockerfile
+    env_file:
+      - "./server/.env"
+    volumes:
+      - "./server/pace.db:/app/pace.db"
+    command: sh -c "cd /app && diesel migration run && /app/pace-calculator"
+    ports:
+      - "3001:3001"

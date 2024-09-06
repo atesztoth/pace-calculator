@@ -7,6 +7,7 @@ mod models;
 mod response;
 mod routes;
 mod schema;
+mod utils;
 mod validation;
 
 use axum::extract::State;
@@ -71,7 +72,9 @@ async fn health(_: State<SharedState>) -> &'static str {
 }
 
 fn create_app_state(env_config: &EnvConfig) -> AppState {
-    let db = Arc::new(DatabaseServiceImpl::new(&env_config.database_url));
+    let db_path = utils::file_utils::resolve_file_path(&env_config.database_name);
+
+    let db = Arc::new(DatabaseServiceImpl::new(&db_path));
     let calculator = CalculatorService::new(Arc::clone(&db));
 
     AppState {

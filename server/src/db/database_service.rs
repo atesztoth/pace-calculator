@@ -21,6 +21,10 @@ pub(crate) struct DatabaseServiceImpl {
 }
 
 impl DatabaseService for DatabaseServiceImpl {
+    /// Creates and initializes db connection.
+    /// Only the name of the database is asked for, because of the resolution logic.
+    /// In a production application the db must be next to the executable, but in development mode,
+    /// it should be in the cargo manifest directory.
     fn new(db_url: &str) -> Self {
         let manager = ConnectionManager::<SqliteConnection>::new(db_url);
 
