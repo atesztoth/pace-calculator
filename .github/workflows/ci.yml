@@ -30,19 +30,31 @@ jobs:
       - name: Build and push front-end Docker image
         uses: int128/kaniko-action@v1
         with:
-          context: .
-          dockerfile: docker/fe.Dockerfile
-          destination: ghcr.io/${{ github.repository }}/pace-fe:latest
+          registry: ghcr.io
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+          build_file: docker/fe.Dockerfile
+          path: frontend
+
+          image: frontend
+          tag: latest
           cache: true
-          build_args: |
+
+          extra_args: |
             --no-snapshot
 
       - name: Build and push back-end Docker image
         uses: int128/kaniko-action@v1
         with:
-          context: .
-          dockerfile: docker/server.Dockerfile
-          destination: ghcr.io/${{ github.repository }}/pace-be:latest
+          registry: ghcr.io
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+          build_file: docker/server.Dockerfile
+          path: server
+
+          image: backend
+          tag: latest
+
           cache: true
-          build_args: |
+          extra_args: |
             --no-snapshot
