@@ -6,55 +6,39 @@ on:
       - master
 
 jobs:
-  build:
+  build-fe-to-ghcr:
     runs-on: ubuntu-latest
+    container:
+      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Add frontend build env
         run: |
           echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
 
-      - name: Build and push front-end Docker image
-        uses: int128/kaniko-action@v1
-        with:
-          registry: ghcr.io
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push Image to GHCR with kaniko
+        run: |
+          cat <<EOF > /kaniko/.docker/config.json
+          {
+            "auths": {
+              "ghcr.io": {
+                "auth": "$(echo -n "$GIT_USERNAME:$GIT_PASSWORD" | base64 -w0)"
+              }
+            }
+          }
+          EOF
 
-          build_file: docker/fe.Dockerfile
-          path: frontend
-
-          image: frontend
-          tag: latest
-          cache: true
-
-          extra_args: |
-            --no-snapshot
-
-      - name: Build and push back-end Docker image
-        uses: int128/kaniko-action@v1
-        with:
-          registry: ghcr.io
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-          build_file: docker/server.Dockerfile
-          path: server
-
-          image: backend
-          tag: latest
-
-          cache: true
-          extra_args: |
-            --no-snapshot
+          /kaniko/executor --dockerfile="./docker/frontend.Dockerfile" \
+            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
+            --destination="$GH_REGISTRY/$IMAGE_NAME:latest" \
+            ${{ env.KANIKO_CACHE_ARGS }} \
+            --push-retry 5
+        env:
+          GIT_USERNAME: ${{ github.actor }}
+          GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GH_REGISTRY: "ghcr.io"
+          IMAGE_NAME: "${{ github.repository }}/pace-fe"
