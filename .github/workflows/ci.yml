@@ -23,6 +23,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Add frontend build env
+        run: |
+          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
+
       - name: Build and push front-end Docker image
         uses: int128/kaniko-action@v1
         with:

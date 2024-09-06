@@ -12,3 +12,14 @@ services:
     command: sh -c "cd /app && diesel migration run && /app/pace-calculator"
     ports:
       - "3001:3001"
+
+  frontend:
+    # Either use this, or (build-be.sh and):
+    # image: pacefe:test
+    build:
+      context: frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    env_file:
+      - "./frontend/.env"
+    ports:
+      - "3000:80"

@@ -8,3 +8,7 @@ It is a simple frontend meant to create a convenient way to use the calculator.
 
 todo!()
 
+## Build info
+
+The config file `nginx-static.nginx.conf` technically should not be here. \
+That should be copied from `../docker`. Will do it later (or not).
