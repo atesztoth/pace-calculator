@@ -16,12 +16,9 @@ jobs:
       packages: write
 
     steps:
-      - name: Add frontend build env
-        run: |
-          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
-
       - name: Build and Push Image to GHCR with kaniko
         run: |
+          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env &&
           cat <<EOF > /kaniko/.docker/config.json
           {
             "auths": {
