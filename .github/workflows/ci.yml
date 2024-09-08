@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  build-fe:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,43 +23,34 @@ jobs:
           mkdir -p ~/.docker
           echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
 
-      - name: Build and push Docker image
+      - name: Build and push FE Docker image
         uses: int128/kaniko-action@v1
         with:
           tags: ghcr.io/${{ github.repository }}:latest
           file: ./docker/frontend.ci.Dockerfile
           context: .
+          kaniko-args: |
+            --single-snapshot
 
-#  build-fe-to-ghcr:
-#    runs-on: ubuntu-latest
-#    container:
-#      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
-#
-#    permissions:
-#      contents: read
-#      packages: write
-#
-#    steps:
-#      - name: Build and Push Image to GHCR with kaniko
-#        run: |
-#          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env &&
-#          cat <<EOF > /kaniko/.docker/config.json
-#          {
-#            "auths": {
-#              "ghcr.io": {
-#                "auth": "$(echo -n "$GIT_USERNAME:$GIT_PASSWORD" | base64 -w0)"
-#              }
-#            }
-#          }
-#          EOF
-#
-#          /kaniko/executor --dockerfile="./docker/frontend.Dockerfile" \
-#            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
-#            --destination="$GH_REGISTRY/$IMAGE_NAME:latest" \
-#            ${{ env.KANIKO_CACHE_ARGS }} \
-#            --push-retry 5
-#        env:
-#          GIT_USERNAME: ${{ github.actor }}
-#          GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-#          GH_REGISTRY: "ghcr.io"
-#          IMAGE_NAME: "${{ github.repository }}/pace-fe"
+  build-be:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker config for GHCR
+        run: |
+          mkdir -p ~/.docker
+          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
+
+      - name: Build and push FE Docker image
+        uses: int128/kaniko-action@v1
+        with:
+          tags: ghcr.io/${{ github.repository }}:latest
+          file: ./docker/server.ci.Dockerfile
+          context: .
+          kaniko-args: |
+            --single-snapshot
+
