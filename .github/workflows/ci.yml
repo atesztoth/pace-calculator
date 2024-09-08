@@ -21,16 +21,17 @@ jobs:
       # Step 2: Set up Docker config for GHCR (GitHub Container Registry)
       - name: Set up Docker config for GHCR
         run: |
-          mkdir -p /kaniko/.docker
-          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > /kaniko/.docker/config.json
+          mkdir -p ~/.docker
+          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
 
-      # Step 3: Run Kaniko to build and push the Docker image to GHCR
-      - name: Build and push Docker image with Kaniko
-        uses: gcr.io/kaniko-project/executor:latest
-        env:
-          DOCKER_CONFIG: /kaniko/.docker
+      # Step 3: Build and push Docker image using Kaniko Action
+      - name: Build and push Docker image
+        uses: int128/kaniko-action@v1
         with:
-          args: --dockerfile docker/fe.Dockerfile --context . --destination ghcr.io/${{ github.repository }}:latest
+          image: ghcr.io/${{ github.repository }}:latest # Destination repository in GHCR
+          dockerfile: docker/fe.Dockerfile # Path to your Dockerfile
+          context: frontend # Build context (root of the repository)
+
 #  build-fe-to-ghcr:
 #    runs-on: ubuntu-latest
 #    container:
