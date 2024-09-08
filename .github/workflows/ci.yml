@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build-fe:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -23,10 +24,11 @@ jobs:
           mkdir -p ~/.docker
           echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
 
-      - name: Build and push FE Docker image
+      - name: Build and push Docker image
         uses: int128/kaniko-action@v1
         with:
-          tags: ghcr.io/${{ github.repository }}:latest
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest
           file: ./docker/frontend.ci.Dockerfile
           context: .
           kaniko-args: |
@@ -36,7 +38,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -45,10 +46,11 @@ jobs:
           mkdir -p ~/.docker
           echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
 
-      - name: Build and push FE Docker image
+      - name: Build and push Docker image
         uses: int128/kaniko-action@v1
         with:
-          tags: ghcr.io/${{ github.repository }}:latest
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:latest
           file: ./docker/server.ci.Dockerfile
           context: .
           kaniko-args: |
