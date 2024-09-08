@@ -9,6 +9,6 @@ I wanted to have a very simple calculator that I can use from any place, even fr
 downloading any application. \
 Current calculators I know are just not convenient enough.
 
-### Deployment?
+### Deployment
 
-In progress!
+Check out at: https://pace.decimeter.hu.
