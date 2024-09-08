@@ -27,7 +27,7 @@ jobs:
         uses: int128/kaniko-action@v1
         with:
           tags: ghcr.io/${{ github.repository }}:latest
-          file: ./docker/frontend.Dockerfile
+          file: ./docker/frontend.ci.Dockerfile
           context: .
 
 #  build-fe-to-ghcr:
