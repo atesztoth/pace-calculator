@@ -29,7 +29,7 @@ jobs:
         uses: int128/kaniko-action@v1
         with:
           image: ghcr.io/${{ github.repository }}:latest # Destination repository in GHCR
-          dockerfile: docker/fe.Dockerfile # Path to your Dockerfile
+          dockerfile: docker/frontend.Dockerfile # Path to your Dockerfile
           context: frontend # Build context (root of the repository)
 
 #  build-fe-to-ghcr:
