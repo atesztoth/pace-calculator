@@ -6,36 +6,61 @@ on:
       - master
 
 jobs:
-  build-fe-to-ghcr:
+  build:
     runs-on: ubuntu-latest
-    container:
-      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Build and Push Image to GHCR with kaniko
-        run: |
-          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env &&
-          cat <<EOF > /kaniko/.docker/config.json
-          {
-            "auths": {
-              "ghcr.io": {
-                "auth": "$(echo -n "$GIT_USERNAME:$GIT_PASSWORD" | base64 -w0)"
-              }
-            }
-          }
-          EOF
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-          /kaniko/executor --dockerfile="./docker/frontend.Dockerfile" \
-            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
-            --destination="$GH_REGISTRY/$IMAGE_NAME:latest" \
-            ${{ env.KANIKO_CACHE_ARGS }} \
-            --push-retry 5
+      - name: Add frontend build env
+        run: |
+          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
+
+      # Step 2: Set up Docker config for GHCR (GitHub Container Registry)
+      - name: Set up Docker config for GHCR
+        run: |
+          mkdir -p /kaniko/.docker
+          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > /kaniko/.docker/config.json
+
+      # Step 3: Run Kaniko to build and push the Docker image to GHCR
+      - name: Build and push Docker image with Kaniko
+        uses: gcr.io/kaniko-project/executor:latest
         env:
-          GIT_USERNAME: ${{ github.actor }}
-          GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          GH_REGISTRY: "ghcr.io"
-          IMAGE_NAME: "${{ github.repository }}/pace-fe"
+          DOCKER_CONFIG: /kaniko/.docker
+        with:
+          args: --dockerfile docker/fe.Dockerfile --context . --destination ghcr.io/${{ github.repository }}:latest
+#  build-fe-to-ghcr:
+#    runs-on: ubuntu-latest
+#    container:
+#      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
+#
+#    permissions:
+#      contents: read
+#      packages: write
+#
+#    steps:
+#      - name: Build and Push Image to GHCR with kaniko
+#        run: |
+#          echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env &&
+#          cat <<EOF > /kaniko/.docker/config.json
+#          {
+#            "auths": {
+#              "ghcr.io": {
+#                "auth": "$(echo -n "$GIT_USERNAME:$GIT_PASSWORD" | base64 -w0)"
+#              }
+#            }
+#          }
+#          EOF
+#
+#          /kaniko/executor --dockerfile="./docker/frontend.Dockerfile" \
+#            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
+#            --destination="$GH_REGISTRY/$IMAGE_NAME:latest" \
+#            ${{ env.KANIKO_CACHE_ARGS }} \
+#            --push-retry 5
+#        env:
+#          GIT_USERNAME: ${{ github.actor }}
+#          GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+#          GH_REGISTRY: "ghcr.io"
+#          IMAGE_NAME: "${{ github.repository }}/pace-fe"
