@@ -28,7 +28,7 @@ jobs:
         with:
           tags: ghcr.io/${{ github.repository }}:latest
           file: ./docker/frontend.Dockerfile
-          context: "{{defaultContext}}:frontend"
+          context: "frontend"
 #          context: ./frontend
 
 #  build-fe-to-ghcr:
