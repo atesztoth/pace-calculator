@@ -18,19 +18,17 @@ jobs:
         run: |
           echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
 
-      # Step 2: Set up Docker config for GHCR (GitHub Container Registry)
       - name: Set up Docker config for GHCR
         run: |
           mkdir -p ~/.docker
           echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}}}" > ~/.docker/config.json
 
-      # Step 3: Build and push Docker image using Kaniko Action
       - name: Build and push Docker image
         uses: int128/kaniko-action@v1
         with:
-          tags: ghcr.io/${{ github.repository }}:latest # Destination repository in GHCR
-          file: docker/frontend.Dockerfile # Path to your Dockerfile
-          context: frontend # Build context (root of the repository)
+          tags: ghcr.io/${{ github.repository }}:latest
+          file: ./docker/frontend.Dockerfile
+          context: ./frontend
 
 #  build-fe-to-ghcr:
 #    runs-on: ubuntu-latest
