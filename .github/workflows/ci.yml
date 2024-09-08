@@ -28,7 +28,8 @@ jobs:
         with:
           tags: ghcr.io/${{ github.repository }}:latest
           file: ./docker/frontend.Dockerfile
-          context: ./frontend
+          context: "{{defaultContext}}:frontend"
+#          context: ./frontend
 
 #  build-fe-to-ghcr:
 #    runs-on: ubuntu-latest
