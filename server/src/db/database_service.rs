@@ -1,6 +1,13 @@
+use super::connection_customizer::SqliteConnectionCustomizer;
 use crate::db::errors::DbError;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::SqliteConnection;
+use std::time::Duration;
+
+#[derive(Clone)]
+pub(crate) struct DatabaseServiceImpl {
+    pub connection_pool: Pool<ConnectionManager<SqliteConnection>>,
+}
 
 pub trait DatabaseService: Send + Sync {
     fn new(db_url: &str) -> Self
@@ -15,11 +22,6 @@ pub trait DatabaseService: Send + Sync {
     ) -> Result<PooledConnection<ConnectionManager<SqliteConnection>>, DbError>;
 }
 
-#[derive(Clone)]
-pub(crate) struct DatabaseServiceImpl {
-    pub connection_pool: Pool<ConnectionManager<SqliteConnection>>,
-}
-
 impl DatabaseService for DatabaseServiceImpl {
     /// Creates and initializes db connection.
     /// Only the name of the database is asked for, because of the resolution logic.
@@ -29,6 +31,9 @@ impl DatabaseService for DatabaseServiceImpl {
         let manager = ConnectionManager::<SqliteConnection>::new(db_url);
 
         let connection_pool = Pool::builder()
+            .max_size(10)
+            .connection_timeout(Duration::from_secs(5))
+            .connection_customizer(Box::new(SqliteConnectionCustomizer))
             .build(manager)
             .expect("Failed to create DB pool!");
 

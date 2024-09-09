@@ -13,7 +13,7 @@ pub async fn api_key_middleware(
     req: Request,
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, String)> {
-    let api_key = state.read().unwrap().env_config.api_key.clone();
+    let api_key = &state.env_config.api_key.clone();
 
     // Check if the header "x-auth-token" exists
     if let Some(auth_token) = req.headers().get(HEADER_API_KEY_PROPERTY) {

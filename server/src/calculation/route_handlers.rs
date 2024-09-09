@@ -13,7 +13,7 @@ pub async fn run_calculation(
     State(state): State<SharedState>,
     ValidJsonRequest(payload): ValidJsonRequest<IncomingCalculationDetails>,
 ) -> Result<(StatusCode, Json<CalculationResult>), Response> {
-    let calculator = &state.read().unwrap().calculator;
+    let calculator = &state.calculator;
 
     let response = match (payload.pace, payload.distance, payload.time) {
         (Some(pace), Some(distance), None) => Some(calculate_time(distance, pace, calculator)),

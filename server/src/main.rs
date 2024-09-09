@@ -17,10 +17,10 @@ use axum::Router;
 use calculation::calculator_service::CalculatorService;
 use config::env_config::EnvConfig;
 use db::database_service::{DatabaseService, DatabaseServiceImpl};
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 
-pub(crate) type SharedState = Arc<RwLock<AppState>>;
+pub(crate) type SharedState = Arc<AppState>;
 
 #[derive(Clone)]
 struct AppState {
@@ -35,9 +35,7 @@ async fn main() {
     let port = env_config.port.clone();
     let state = create_app_state(&env_config);
 
-    // TODO: it would be enough to protect the services,
-    // not the whole state.
-    let shared_state: SharedState = Arc::new(RwLock::new(state));
+    let shared_state: SharedState = Arc::new(state);
 
     // initialize tracing
     tracing_subscriber::fmt::init();
