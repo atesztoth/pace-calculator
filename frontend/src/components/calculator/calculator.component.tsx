@@ -117,6 +117,7 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, presentingResults
                 disabled={parentLoading}
                 ref={distanceRef}
                 type="number"
+                step="any"
                 placeholder="Example: 10"
                 className={styles.distanceBox}
               />
