@@ -9,6 +9,6 @@ pub struct SqliteConnectionCustomizer;
 impl CustomizeConnection<SqliteConnection, R2d2Error> for SqliteConnectionCustomizer {
     fn on_acquire(&self, conn: &mut SqliteConnection) -> Result<(), R2d2Error> {
         conn.batch_execute("PRAGMA busy_timeout = 10000;")
-            .map_err(|e| R2d2Error::QueryError(e)) // Convert Diesel's error to r2d2::Error
+            .map_err(R2d2Error::QueryError) // Convert Diesel's error to r2d2::Error
     }
 }
