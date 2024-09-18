@@ -123,14 +123,14 @@ const CalculatorComponent: React.FC<Props> = ({ parentLoading, presentingResults
               />
             </div>
             <div className={styles.dataBox}>
-              <span>kilometers in</span>
-              <input disabled={parentLoading} ref={timeRef} type="string" placeholder="Exapmle: 44:00" />
-              <span>minutes,</span>
+              <span>kilometers, duration:</span>
+              <input disabled={parentLoading} ref={timeRef} type="string" placeholder="Example: 44:00" />
+              <span>(h:m:s),</span>
             </div>
             <div className={styles.dataBox} style={{ marginTop: '1rem' }}>
               <span> which is a pace of:</span>
               <input disabled={parentLoading} ref={paceRef} type="string" placeholder="Example: 4:24" />
-              <span>(hour:min:sec) / km</span>
+              <span>(h:m:s) / km</span>
             </div>
           </div>
 

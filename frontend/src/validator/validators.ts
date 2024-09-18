@@ -22,10 +22,11 @@ export const validateStringNumber = (v: string): ValidationResult<number> => {
 }
 
 export const validateStringNumberGtZero = (v: string): ValidationResult<number> => {
-  const parsedNumber = parseNumberStr(v)
-  const isValid = parsedNumber !== null && parsedNumber > 0
+  const stringNumberValidationResult = validateStringNumber(v)
+  if (!stringNumberValidationResult.isValid) return stringNumberValidationResult
 
-  return { isValid, value: isValid ? parsedNumber : null }
+  const isValid = stringNumberValidationResult.value! > 0
+  return { isValid, value: isValid ? stringNumberValidationResult.value! : null }
 }
 
 export const validateTimeString = (str: string): ValidationResult<null> => {
