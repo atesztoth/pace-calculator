@@ -17,7 +17,7 @@ export const runValidate = <
   object: T,
   validators: V = defaultValidators as V, // added this here so it is actually testable, Jest was dying on this.
   // But I also want this to be hidden from the users, so nice, I can now curry this function for no particular reason other than Jest :)
-  // Sometimes tests do nothing just holds you back.
+  // Sometimes tests do nothing just hold you back.
 ): ValidatedResult<K> => {
   return (Object.keys(object) as K[]).reduce((a, c) => {
     if ((object[c].excludeIfUndefined ?? false) && object[c].value === void 0) return a
