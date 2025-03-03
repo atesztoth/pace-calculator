@@ -73,7 +73,7 @@ mod test {
     struct MockDatabaseService;
 
     impl DatabaseService for MockDatabaseService {
-        fn new(db_url: &str) -> impl DatabaseService
+        fn new(_db_url: &str) -> Self
         where
             Self: Sized,
         {
